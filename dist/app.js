@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const ws_1 = require("ws");
 const bolt_1 = require("@slack/bolt");
-const CHANNEL_ID = 'DA4V0Q0DR';
+const CHANNEL_ID = process.env.SLACK_DEFAULT_CHANNEL;
 const app = new bolt_1.App({
     token: process.env.SLACK_BOT_TOKEN,
     appToken: process.env.SLACK_APP_TOKEN,
@@ -45,14 +45,32 @@ const app = new bolt_1.App({
         });
     });
     app.event('message', ({ event, say }) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        console.log('received message: ', event);
         if (!event.subtype) {
             const messageEvent = event;
             if (!messageEvent.text) {
                 return;
             }
+            let name = 'Unkown';
+            if (messageEvent.user) {
+                // eslint-disable-next-line no-await-in-loop
+                const res = yield app.client.users.info({
+                    user: messageEvent.user,
+                });
+                if (res) {
+                    name = (_b = (_a = res.user) === null || _a === void 0 ? void 0 : _a.profile) === null || _b === void 0 ? void 0 : _b.real_name;
+                    // email: res.user.profile.email,
+                    // avatar: res.user.profile.image_72,
+                    // source: 'slack',
+                }
+            }
+            else if (messageEvent.user_profile && messageEvent.user_profile.real_name) {
+                name = messageEvent.user_profile.real_name;
+            }
             const message = {
                 id: messageEvent.client_msg_id,
-                name: messageEvent.user_profile.real_name,
+                name,
                 text: messageEvent.text,
             };
             console.log('messageEvent.text: ', messageEvent.text);
