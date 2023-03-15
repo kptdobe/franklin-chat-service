@@ -10,8 +10,8 @@ type Message = {
 }
 
 const app = new App({
-  token: 'xoxb-345223927429-ccpAEGpLlGt5uKW0KVKzR2ku',
-  appToken: 'xapp-1-AA4TSRLKV-4941813583494-7f66bb7e42783bd31803a122fdbb66a0f124ae0789dfb3076a709f3f16204d8a',
+  token: process.env.SLACK_BOT_TOKEN,
+  appToken: process.env.SLACK_APP_TOKEN,
   socketMode: true,
 });
 
