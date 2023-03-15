@@ -13,8 +13,8 @@ const ws_1 = require("ws");
 const bolt_1 = require("@slack/bolt");
 const CHANNEL_ID = 'DA4V0Q0DR';
 const app = new bolt_1.App({
-    token: 'xoxb-345223927429-ccpAEGpLlGt5uKW0KVKzR2ku',
-    appToken: 'xapp-1-AA4TSRLKV-4941813583494-7f66bb7e42783bd31803a122fdbb66a0f124ae0789dfb3076a709f3f16204d8a',
+    token: process.env.SLACK_BOT_TOKEN,
+    appToken: process.env.SLACK_APP_TOKEN,
     socketMode: true,
 });
 (() => __awaiter(void 0, void 0, void 0, function* () {
