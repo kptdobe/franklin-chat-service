@@ -1,9 +1,12 @@
 {
-  "name": "franklin-chat-microservice",
-  "version": "1.0.0",
+  "name": "franklin-chat-service",
+  "version": "1.0.4",
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node -r dotenv/config dist/app.js",
+    "build:docker": "dotenv -- cross-var \"scripts/build-docker-image.sh %npm_package_version%\"",
+    "deploy": "dotenv -- cross-var \"scripts/deploy-to-k8s.sh %npm_package_version%\"",
+    "set:context": "dotenv -- cross-var \"scripts/set-k8s-context.sh\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,10 +14,13 @@
   "dependencies": {
     "@slack/bolt": "3.12.2",
     "dotenv": "16.0.3",
+    "express": "^4.18.2",
     "ws": "8.13.0"
   },
   "devDependencies": {
     "@types/ws": "8.5.4",
+    "cross-var": "1.1.0",
+    "dotenv-cli": "7.1.0",
     "typescript": "4.9.5"
   }
 }
