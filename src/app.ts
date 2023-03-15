@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import { App } from '@slack/bolt';
 
-const CHANNEL_ID = process.env.SLACK_DEFAULT_CHANNEL;
+const CHANNEL_ID = process.env.SLACK_DEFAULT_CHANNEL as string;
 
 type Message = {
   id: string
