@@ -1,0 +1,16 @@
+fullnameOverride: "franklin-chat-service"
+
+image:
+  repository: docker-experience-success-release.dr-uw2.adobeitc.com/aem-outbound-marketing/franklin-chat-bot
+  pullPolicy: Always
+  tag: 1.0.0
+
+imagePullSecrets:
+  - name: regcred
+
+replicaCount: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
