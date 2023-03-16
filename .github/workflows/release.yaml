@@ -18,3 +18,10 @@ jobs:
       - run: npm run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_IMAGE_NAME }}
+          DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DEPLOYMENT_NAME: ${{ secrets.DEPLOYMENT_NAME }}
+          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
+          NAMESPACE: ${{ secrets.NAMESPACE }}
