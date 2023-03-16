@@ -1,6 +1,6 @@
 {
   "name": "franklin-chat-service",
-  "version": "1.0.4",
+  "version": "1.0.0",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-dev --inspect -r dotenv/config src/app.ts",
