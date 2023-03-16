@@ -43,7 +43,7 @@ spec:
             - name: SLACK_APP_TOKEN
               value: !!str {{ .Values.config.slackAppToken }}
           ports:
-            - containerPort: 3000
+            - containerPort: {{ .Values.config.serverPort }}
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

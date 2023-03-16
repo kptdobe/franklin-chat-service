@@ -11,7 +11,7 @@ spec:
       timeout: 5m
       services:
         - name: {{ include "helm.fullname" . }}
-          port: 3000
+          port: {{ .Values.config.serverPort }}
       enableWebsockets: true
   virtualhost:
     fqdn: {{ include "helm.fullname" . }}-{{ .Release.Namespace }}.{{ .Values.clusterName }}.ethos.adobe.net

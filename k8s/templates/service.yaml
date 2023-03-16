@@ -7,8 +7,8 @@ metadata:
     {{- include "helm.labels" . | nindent 4 }}
 spec:
   ports:
-    - port: 3000
-      targetPort: 3000
+    - port: {{ .Values.config.serverPort }}
+      targetPort: {{ .Values.config.serverPort }}
       protocol: TCP
       name: http
   selector:
