@@ -1,0 +1,17 @@
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata:
+  name: {{ include "helm.fullname" . }}-public
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "contour-public"
+spec:
+  routes:
+    - match: /
+      timeout: 5m
+      services:
+        - name: {{ include "helm.fullname" . }}
+          port: 3000
+      enableWebsockets: true
+  virtualhost:
+    fqdn: {{ include "helm.fullname" . }}-{{ .Release.Namespace }}.{{ .Values.clusterName }}.ethos.adobe.net
