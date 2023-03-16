@@ -16,6 +16,7 @@ helm upgrade "$DEPLOYMENT_NAME" "k8s" -i --kube-context "$CLUSTER_NAME" -n "$NAM
   --set image.tag="$VERSION" \
   --set image.repository="$DOCKER_REGISTRY_URL/$DOCKER_IMAGE_NAME" \
   --set config.serverPort="$SERVER_PORT" \
-  --set config.slackDefaultChannel="$SLACK_DEFAULT_CHANNEL" \
+  --set config.slackAdminChannelId="$SLACK_ADMIN_CHANNEL_ID" \
+  --set config.slackDefaultChannelId="$SLACK_DEFAULT_CHANNEL_ID" \
   --set config.slackBotToken="$SLACK_BOT_TOKEN" \
   --set config.slackAppToken="$SLACK_APP_TOKEN" \
