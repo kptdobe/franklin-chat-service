@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/kptdobe/franklin-chat-service/compare/v1.0.1...v1.1.0) (2023-03-16)
+
+
+### Features
+
+* trigger CI ([9d44840](https://github.com/kptdobe/franklin-chat-service/commit/9d448400b846b3da493bbb11556ed285dc1cdb4a))
+
 ## [1.0.1](https://github.com/kptdobe/franklin-chat-service/compare/v1.0.0...v1.0.1) (2023-03-16)
 
 
