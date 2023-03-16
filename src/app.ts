@@ -22,6 +22,7 @@ const app = new App({
   const wss = new WebSocketServer({ port: SERVER_PORT });
   wss.on('connection', function connection(ws) {
 
+    console.log('New client connected');
     app.client.chat.postMessage({
       channel: SLACK_ADMIN_CHANNEL_ID,
       text: 'New client connected'
@@ -96,5 +97,8 @@ const app = new App({
   });
   await app.start();
 
-  console.log('⚡️ Bolt app started');
+  console.log(`\nAdmin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
+  console.log(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}\n`);
+
+  console.log(`⚡️Franklin Chat server is running on port ${SERVER_PORT}!`);
 })();
