@@ -34,8 +34,10 @@ spec:
               value: dev
             - name: SERVER_PORT
               value: !!str {{ .Values.config.serverPort }}
-            - name: SLACK_DEFAULT_CHANNEL
-              value: !!str {{ .Values.config.slackDefaultChannel }}
+            - name: SLACK_ADMIN_CHANNEL_ID
+              value: !!str {{ .Values.config.slackAdminChannelId }}
+            - name: SLACK_DEFAULT_CHANNEL_ID
+              value: !!str {{ .Values.config.slackDefaultChannelId }}
             - name: SLACK_BOT_TOKEN
               value: !!str {{ .Values.config.slackBotToken }}
             - name: SLACK_APP_TOKEN
