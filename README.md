@@ -22,3 +22,7 @@ Slack app: https://api.slack.com/apps/AA4TSRLKV
   - NAMESPACE
 - `npm run build:docker`
 - `npm run deploy`
+
+## Development
+
+You can use `npm run dev` to run the service in dev mode: watch for changes in TS files and open the inspect port.
