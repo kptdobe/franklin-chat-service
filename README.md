@@ -7,7 +7,8 @@ Slack app: https://api.slack.com/apps/AA4TSRLKV
   - SLACK_BOT_TOKEN  (OAuth & Permissions > Bot User OAuth Token)
   - SLACK_APP_TOKEN (Basic Information > App-Level Tokens > "App Token")
   - SERVER_PORT
-  - SLACK_DEFAULT_CHANNEL
+  - SLACK_DEFAULT_CHANNEL_ID (Slack channel id where the messages are sent by default - note: slack app above needs to be invited to the channel)
+  - SLACK_ADMIN_CHANNEL_ID (Slack channel id where the admin messages are sent to - note: slack app above needs to be invited to the channel)
 - `npm start`
 
 ## Deploying to Ethos
