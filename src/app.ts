@@ -51,14 +51,34 @@ const app = new App({
   });
 
   app.event('message', async ({ event, say }) => {
+    console.log('received message: ', event);
     if (!event.subtype) {
       const messageEvent = event as any;
       if (!messageEvent.text) {
         return;
       }
+
+      let name = 'Unkown';
+
+      if (messageEvent.user) {
+        // eslint-disable-next-line no-await-in-loop
+        const res = await app.client.users.info({
+          user: messageEvent.user,
+        });
+
+        if (res) {
+          name = res.user?.profile?.real_name as string;
+            // email: res.user.profile.email,
+            // avatar: res.user.profile.image_72,
+            // source: 'slack',
+        }
+      } else if (messageEvent.user_profile && messageEvent.user_profile.real_name) {
+        name = messageEvent.user_profile.real_name;
+      }
+
       const message: Message = {
         id: messageEvent.client_msg_id,
-        name: messageEvent.user_profile.real_name,
+        name,
         text: messageEvent.text,
       }
       console.log('messageEvent.text: ', messageEvent.text);
