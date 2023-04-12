@@ -1,3 +1,4 @@
+import express from 'express';
 import { WebSocket, WebSocketServer, RawData } from 'ws';
 import { App as Slack } from '@slack/bolt';
 
@@ -98,7 +99,10 @@ function handleSlackMessage(wss: WebSocketServer, slack: Slack) {
 }
 
 (async () => {
-  const wss = new WebSocketServer({ port: SERVER_PORT });
+  console.log(`\nAdmin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
+  console.log(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}\n`);
+
+  const wss = new WebSocketServer({ noServer: true });
 
   const slack = new Slack({
     token: process.env.SLACK_BOT_TOKEN,
@@ -111,8 +115,20 @@ function handleSlackMessage(wss: WebSocketServer, slack: Slack) {
 
   await slack.start();
 
-  console.log(`\nAdmin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
-  console.log(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}\n`);
+  const app = express();
 
-  console.log(`⚡️Franklin Chat server is running on port ${SERVER_PORT}!`);
+  app.get('/', (req, res) => {
+    res.send('Franklin Chat server is running!')
+  })
+
+  const server = app.listen(SERVER_PORT, () => {
+    console.log(`⚡️Franklin Chat server is running on port ${SERVER_PORT}!`);
+  });
+
+  server.on("upgrade", (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (websocket) => {
+      wss.emit("connection", websocket, request);
+    });
+  });
+
 })();
