@@ -15,3 +15,6 @@ spec:
       enableWebsockets: true
   virtualhost:
     fqdn: {{ include "helm.fullname" . }}-{{ .Release.Namespace }}.{{ .Values.clusterName }}.ethos.adobe.net
+    tls:
+      secretName: heptio-contour/cluster-ssl-public
+
