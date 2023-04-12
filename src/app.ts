@@ -1,6 +1,6 @@
-import express from 'express';
+import express, {raw} from 'express';
 import { WebSocket, WebSocketServer, RawData } from 'ws';
-import { App as Slack } from '@slack/bolt';
+import { App as Slack} from '@slack/bolt';
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -13,13 +13,54 @@ type Message = {
   text: string
 }
 
+async function getUserName(message: any, slack: Slack) {
+  if (message.user) {
+    // eslint-disable-next-line no-await-in-loop
+    const res = await slack.client.users.info({
+      user: message.user,
+    });
+
+    if (res) {
+      return res.user?.profile?.real_name as string;
+    }
+  } else if (message.user_profile && message.user_profile.real_name) {
+    return message.user_profile.real_name;
+  }
+  return 'Unknown';
+}
+
 function handleConnection(wss: WebSocketServer, slack: Slack) {
-  return function connection(ws: WebSocket) {
+  return async function connection(ws: WebSocket) {
     console.log('client connected');
-    slack.client.chat.postMessage({
+    await slack.client.chat.postMessage({
       channel: SLACK_ADMIN_CHANNEL_ID,
       text: 'New client connected'
     });
+    const history = await slack.client.conversations.history({
+      channel: SLACK_DEFAULT_CHANNEL_ID,
+      include_all_metadata: true,
+      inclusive: true,
+    });
+
+    const oldMessages = history.messages?.reverse()
+      .filter(message => message.client_msg_id || message.ts)
+      .map(async (message) => {
+        const name = await getUserName(message, slack)
+        return {
+          id: message.client_msg_id || message.ts,
+          name,
+          text: message.text || ''
+        } as Message;
+    });
+
+    if (oldMessages) {
+      const messages = await Promise.all(oldMessages);
+      messages.forEach(message => {
+        console.log(`sending to client: ${message.text}`);
+        ws.send(JSON.stringify(message));
+      });
+    }
+
     ws.on('message', handleChatMessage(wss, slack));
     ws.on('error', console.error);
     ws.on('close', () => {
