@@ -1,6 +1,6 @@
 {
   "name": "franklin-chat-service",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-dev --inspect -r dotenv/config src/app.ts",
@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@magic-sdk/admin": "^1.9.2",
-    "@slack/bolt": "3.12.2",
+    "@slack/bolt": "3.13.0",
     "cors": "^2.8.5",
     "dotenv": "16.0.3",
     "express": "^4.18.2",

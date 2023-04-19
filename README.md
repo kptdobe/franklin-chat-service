@@ -28,8 +28,8 @@
 - `npm run deploy`
 
 ## Rest API
-- Heath check: `GET http(s)://{endpoint}/health`
-- To update channel mapping: `GET http(s)://{endpoint}/update`
+- Heath check: `GET https://franklin-chat-service-ns-team-sites-xp-outbound-marketing-stage.ethos09-prod-va7.ethos.adobe.net/health`
+- To update channel mapping: `GET https://franklin-chat-service-ns-team-sites-xp-outbound-marketing-stage.ethos09-prod-va7.ethos.adobe.net/update`
 
 ## Development
 You can use `npm run dev` to run the service in dev mode: watch for changes in TS files and open the inspect port.
