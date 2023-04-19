@@ -28,6 +28,7 @@
 - `npm run deploy`
 
 ## Rest API
+- Heath check: `GET http(s)://{endpoint}/health`
 - To update channel mapping: `GET http(s)://{endpoint}/update`
 
 ## Development

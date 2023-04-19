@@ -271,7 +271,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
     }
   });
 
-  app.get('/', (req, res) => {
+  app.get('/health', (req, res) => {
     res.send('Franklin Chat server is running!')
   })
 

@@ -55,13 +55,13 @@ spec:
               protocol: TCP
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: {{ .Values.config.serverPort }}
             periodSeconds: 5
             timeoutSeconds: 30
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: {{ .Values.config.serverPort }}
             periodSeconds: 30
             timeoutSeconds: 15
