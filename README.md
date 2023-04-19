@@ -1,12 +1,16 @@
 # Franklin Chat Service
-
-Slack app: https://api.slack.com/apps/AA4TSRLKV
+- Slack app: https://api.slack.com/apps/AA4TSRLKV
+- E-mail to channel mapping: [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1ODgfW1hBKvVM1yBfMX06EBUpL_kPfUNMkctCuiNRoWw/edit?usp=sharing) 
 
 ## Running locally
 - add the following properties to `.env`
+  - SERVER_PORT
+  - MAGIC_LINK_API_KEY=...
+  - GOOGLE_SHEET_ID=...
+  - GOOGLE_SERVICE_ACCOUNT_EMAIL=...
+  - GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY=...
   - SLACK_BOT_TOKEN  (OAuth & Permissions > Bot User OAuth Token)
   - SLACK_APP_TOKEN (Basic Information > App-Level Tokens > "App Token")
-  - SERVER_PORT
   - SLACK_DEFAULT_CHANNEL_ID (Slack channel id where the messages are sent by default - note: slack app above needs to be invited to the channel)
   - SLACK_ADMIN_CHANNEL_ID (Slack channel id where the admin messages are sent to - note: slack app above needs to be invited to the channel)
 - `npm start`
@@ -23,6 +27,8 @@ Slack app: https://api.slack.com/apps/AA4TSRLKV
 - `npm run build:docker`
 - `npm run deploy`
 
-## Development
+## Rest API
+- To update channel mapping: `GET http(s)://{endpoint}/update`
 
+## Development
 You can use `npm run dev` to run the service in dev mode: watch for changes in TS files and open the inspect port.

@@ -16,6 +16,10 @@ helm upgrade "$DEPLOYMENT_NAME" "k8s" -i --kube-context "$CLUSTER_NAME" -n "$NAM
   --set image.tag="$VERSION" \
   --set image.repository="$DOCKER_REGISTRY_URL/$DOCKER_IMAGE_NAME" \
   --set config.serverPort="$SERVER_PORT" \
+  --set config.magicLinkApiKey="$MAGIC_LINK_API_KEY" \
+  --set config.googleSheetId="$GOOGLE_SHEET_ID" \
+  --set config.googleServiceAccountEmail="$GOOGLE_SERVICE_ACCOUNT_EMAIL" \
+  --set config.googleServiceAccountPrivateKey="$GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY" \
   --set config.slackAdminChannelId="$SLACK_ADMIN_CHANNEL_ID" \
   --set config.slackDefaultChannelId="$SLACK_DEFAULT_CHANNEL_ID" \
   --set config.slackBotToken="$SLACK_BOT_TOKEN" \
