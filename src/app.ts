@@ -144,7 +144,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 
     await slack.client.chat.postMessage({
       channel: SLACK_ADMIN_CHANNEL_ID,
-      text: 'Client connected ⚡️'
+      text: `Client ${email} connected ⚡️`
     });
 
     socket.on('history', async (data, callback) => {
@@ -167,7 +167,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
       console.log('client disconnected');
       await slack.client.chat.postMessage({
         channel: SLACK_ADMIN_CHANNEL_ID,
-        text: 'Client disconnected 🖐'
+        text: `Client ${socket.data.email} disconnected 🖐`
       });
     });
 
@@ -278,7 +278,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
   app.get('/update', async (req, res) => {
     console.log(`Updating channel map...`);
     domain2slack = await readSheet();
-    res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/x>` + JSON.stringify(Object.fromEntries(domain2slack)));
+    res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/>` + JSON.stringify(Object.fromEntries(domain2slack)));
   })
 
   io.on('connection', handleConnection(io, slack, magic));
