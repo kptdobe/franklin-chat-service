@@ -84,7 +84,10 @@ async function getChannelInfo(channelId: string, slack: Slack) {
   const info = await slack.client.conversations.info({
     channel: channelId,
   });
-  return info.channel?.name ?? 'unknown';
+  return {
+    teamId: info.channel?.context_team_id ?? 'unknown',
+    channelName: info.channel?.name ?? 'unknown',
+  };
 }
 
 async function getHistory(slack: Slack, channel: string, latest?: string) {
@@ -179,7 +182,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
     socket.emit('ready', {
       email,
       channelId: channelId,
-      channelName: await getChannelInfo(channelId, slack),
+      ...(await getChannelInfo(channelId, slack)),
     });
   }
 }
