@@ -67,7 +67,7 @@ async function slackToInternalMessage(slackMessage: any, slack: Slack) {
   } as Message;
 }
 
-async function toInternalMessages(slackMessages: any[], slack: Slack) {
+async function slackToInternalMessages(slackMessages: any[], slack: Slack) {
   const internalMessages = slackMessages.filter(message => message.ts)
     .filter(message => message.subtype !== 'channel_join')
     .map(async (message) => {
@@ -94,7 +94,7 @@ async function getHistory(slack: Slack, channel: string, latest?: string) {
     limit: 20,
     latest,
   });
-  return toInternalMessages(history.messages ?? [], slack);
+  return slackToInternalMessages(history.messages ?? [], slack);
 }
 
 async function getReplies(ts: string, channel: string, slack: Slack) {
@@ -104,7 +104,7 @@ async function getReplies(ts: string, channel: string, slack: Slack) {
     limit: 1000, // get all replies
     ts,
   });
-  return toInternalMessages(replies.messages ?? [], slack);
+  return slackToInternalMessages(replies.messages ?? [], slack);
 }
 
 function handleConnection(io: Server, slack: Slack, magic: Magic) {
