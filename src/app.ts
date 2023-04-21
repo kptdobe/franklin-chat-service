@@ -26,6 +26,14 @@ type Message = {
   text: string
   threadId?: string
   replyCount?: number
+  files?: Attachment[]
+}
+
+type Attachment = {
+  id: string
+  name: string
+  url: string
+  thumbUrl: string
 }
 
 async function getUser(message: any, slack: Slack): Promise<User> {
@@ -56,14 +64,49 @@ async function getUser(message: any, slack: Slack): Promise<User> {
   };
 }
 
+function getFiles(slackMessage: any) {
+  if (slackMessage.files) {
+    return slackMessage.files.map((file: any) => {
+      return {
+        id: file.id,
+        name: file.name,
+        url: file.url_private_download,
+        thumbUrl: file.thumb_64,
+      };
+    });
+  }
+  return [];
+}
+
+async function replaceUserIdsWithNamesInSlackMessage(message: string, slack: Slack): Promise<string> {
+  const slackUserMentionRegex = /<@(.+?)>/g;
+
+  const promises = [];
+  let match;
+  while ((match = slackUserMentionRegex.exec(message))) {
+    const userId = match[1];
+    const promise = getUser({user: userId}, slack)
+      .then(({name: userName}) => `<@${userId}|${userName}>`)
+      .catch(() => `<@${userId}>`);
+    promises.push(promise);
+  }
+
+  const resolvedNames = await Promise.all(promises);
+  return message.replace(slackUserMentionRegex, () => {
+    const resolvedName = resolvedNames.shift();
+    return resolvedName ?? ''; // return empty string if resolvedName is undefined or null
+  });
+}
+
 async function slackToInternalMessage(slackMessage: any, slack: Slack) {
   const user = await getUser(slackMessage, slack)
   return {
     ts: slackMessage.ts,
     user,
-    text: slackMessage.text || '',
+    text: await replaceUserIdsWithNamesInSlackMessage(slackMessage.text || '', slack),
     threadId: slackMessage.thread_ts,
     replyCount: slackMessage.reply_count,
+    files: getFiles(slackMessage),
   } as Message;
 }
 
