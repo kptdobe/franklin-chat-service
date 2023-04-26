@@ -5,6 +5,7 @@ import { App as Slack} from '@slack/bolt';
 import * as http from 'http';
 import {Magic} from '@magic-sdk/admin';
 import {readSheet} from './readSheet';
+import {addDebugRoute} from "./debugRoute";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -322,6 +323,8 @@ function handleSlackMessage(io: Server, slack: Slack) {
   app.get('/health', (req, res) => {
     res.send('Franklin Chat server is running!')
   })
+
+  addDebugRoute(app, io);
 
   app.get('/update', async (req, res) => {
     console.log(`Updating channel map...`);
