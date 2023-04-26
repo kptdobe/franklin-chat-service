@@ -185,7 +185,9 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 
     console.log('token validated', email);
 
-    const channelId = domain2slack.get(email.split('@')[1]) ?? SLACK_DEFAULT_CHANNEL_ID;
+    const channelId = domain2slack.get(email.split('@')[1])
+        ?? domain2slack.get('*')
+        ?? SLACK_DEFAULT_CHANNEL_ID;
     console.log(`channelId: ${channelId}`);
 
     await slack.client.chat.postMessage({
