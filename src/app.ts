@@ -1,4 +1,5 @@
 import express from 'express';
+import { collectDefaultMetrics, register } from 'prom-client';
 import cors from 'cors';
 import {Server, Socket} from 'socket.io';
 import { App as Slack} from '@slack/bolt';
@@ -35,6 +36,11 @@ type Attachment = {
   name: string
   url: string
   thumbUrl: string
+}
+
+export type SearchUser = {
+  id: string
+  name: string
 }
 
 async function getUser(message: any, slack: Slack): Promise<User> {
@@ -210,6 +216,16 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
       callback(replies);
     });
 
+    socket.on('users', async (data, callback) => {
+        console.log(`users requested`);
+        const users = await slack.client.users.list({
+            limit: 100,
+            team_id: data.teamId,
+        });
+        console.log(JSON.stringify(users));
+        callback([]);
+    });
+
     socket.on('message', handleChatMessage(io, channelId, slack));
 
     socket.on('disconnect', async () => {
@@ -331,6 +347,18 @@ function handleSlackMessage(io: Server, slack: Slack) {
     domain2slack = await readSheet();
     res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/>` + JSON.stringify(Object.fromEntries(domain2slack)));
   })
+
+  collectDefaultMetrics();
+  app.get('/metrics', async (_req, res) => {
+    try {
+      console.log('metrics requested')
+      res.set('Content-Type', register.contentType);
+      res.end(await register.metrics());
+      console.log('metrics sent')
+    } catch (err) {
+      res.status(500).end(err);
+    }
+  });
 
   io.on('connection', handleConnection(io, slack, magic));
   slack.event('message', handleSlackMessage(io, slack));
