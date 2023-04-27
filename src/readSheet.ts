@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { JWT } from 'google-auth-library';
+import {logger} from "./logger";
 
 const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID as string;
 const GOOGLE_SHEET_RANGE = 'Sheet1!A2:B';
@@ -13,10 +14,10 @@ export const credentials = {
 };
 
 export async function readSheet() {
-  console.log('\nReading Email to Slack Channel Mapping from Google Sheet');
-  console.log(`Google Sheet ID: ${GOOGLE_SHEET_ID}`);
-  console.log(`Google Sheet Range: ${GOOGLE_SHEET_RANGE}`);
-  console.log(`Google Sheet Client Email: ${credentials.client_email}\n`);
+  logger.info('\nReading Email to Slack Channel Mapping from Google Sheet');
+  logger.info(`Google Sheet ID: ${GOOGLE_SHEET_ID}`);
+  logger.info(`Google Sheet Range: ${GOOGLE_SHEET_RANGE}`);
+  logger.info(`Google Sheet Client Email: ${credentials.client_email}\n`);
 
   const jwt = new JWT({
     email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -35,6 +36,6 @@ export async function readSheet() {
   if (rows && rows.length) {
     return new Map<string, string>(rows.map(([key, value]) => [key, value]));
   }
-  console.log('No data found.');
+  logger.warn('No data found.');
   return new Map<string, string>();
 }

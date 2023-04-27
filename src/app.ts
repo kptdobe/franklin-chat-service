@@ -1,5 +1,4 @@
 import express from 'express';
-import { collectDefaultMetrics, register } from 'prom-client';
 import cors from 'cors';
 import {Server, Socket} from 'socket.io';
 import { App as Slack} from '@slack/bolt';
@@ -7,6 +6,7 @@ import * as http from 'http';
 import {Magic} from '@magic-sdk/admin';
 import {readSheet} from './readSheet';
 import {addDebugRoute} from "./debugRoute";
+import {logger} from "./logger";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -121,7 +121,7 @@ async function slackToInternalMessages(slackMessages: any[], slack: Slack) {
   const internalMessages = slackMessages.filter(message => message.ts)
     .filter(message => message.subtype !== 'channel_join')
     .map(async (message) => {
-      console.log(JSON.stringify(message));
+      logger.debug(JSON.stringify(message));
       return await slackToInternalMessage(message, slack);
     });
   if (internalMessages) {
@@ -164,38 +164,38 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
   return async function connection(socket: Socket) {
 
     if (!socket.handshake.query['token']) {
-      console.error('client connected without token');
+      logger.error('client connected without token');
       socket.disconnect(true);
       return;
     }
-    console.log('client connected', socket.handshake.query['token']);
+    logger.info('client connected', socket.handshake.query['token']);
 
     let email = undefined;
 
     try {
-      console.log('validating token');
+      logger.debug('validating token');
       const metadata = await magic.users.getMetadataByToken(socket.handshake.query['token'] as string);
       email = metadata.email;
     } catch (e) {
-      console.error('client connected with invalid token', e);
-      console.log('disconnecting client');
+      logger.error('client connected with invalid token', e);
+      logger.info('disconnecting client');
       socket.disconnect(true);
       return;
     }
 
     if (!email) {
-      console.error('client connected with invalid token');
-      console.log('disconnecting client');
+      logger.error('client connected with invalid token');
+      logger.info('disconnecting client');
       socket.disconnect(true);
       return;
     }
 
-    console.log('token validated', email);
+    logger.log('token validated', email);
 
     const channelId = domain2slack.get(email.split('@')[1])
         ?? domain2slack.get('*')
         ?? SLACK_DEFAULT_CHANNEL_ID;
-    console.log(`channelId: ${channelId}`);
+    logger.debug(`channelId: ${channelId}`);
 
     await slack.client.chat.postMessage({
       channel: SLACK_ADMIN_CHANNEL_ID,
@@ -203,33 +203,33 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
     });
 
     socket.on('history', async (data, callback) => {
-      console.log(`history requested by ${data.latest}`);
+      logger.debug(`history requested by ${data.latest}`);
       const messages = await getHistory(slack, channelId, data.latest);
-      console.log(`sending ${messages.length} messages to client`);
+      logger.debug(`sending ${messages.length} messages to client`);
       callback(messages);
     });
 
     socket.on('replies', async (data, callback) => {
-      console.log(`replies requested by ${data.ts}`);
+      logger.debug(`replies requested by ${data.ts}`);
       const replies = await getReplies(data.ts, channelId, slack);
-      console.log(`sending ${replies.length} replies to client`);
+      logger.debug(`sending ${replies.length} replies to client`);
       callback(replies);
     });
 
     socket.on('users', async (data, callback) => {
-        console.log(`users requested`);
+        logger.debug(`users requested`);
         const users = await slack.client.users.list({
             limit: 100,
             team_id: data.teamId,
         });
-        console.log(JSON.stringify(users));
+        logger.debug(JSON.stringify(users));
         callback([]);
     });
 
     socket.on('message', handleChatMessage(io, channelId, slack));
 
     socket.on('disconnect', async () => {
-      console.log('client disconnected');
+      logger.info('client disconnected');
       await slack.client.chat.postMessage({
         channel: SLACK_ADMIN_CHANNEL_ID,
         text: `Client ${socket.data.email} disconnected 🖐`
@@ -252,7 +252,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 function handleChatMessage(io: Server, channelId: string, slack: Slack) {
   return async function (data: any) {
     try {
-      console.log('received: %s', data);
+      logger.debug('received: %s', data);
       if (data) {
         const payload = data as Message;
         const slackMessage = await slack.client.chat.postMessage({
@@ -262,24 +262,24 @@ function handleChatMessage(io: Server, channelId: string, slack: Slack) {
           username: payload.user.name,
           icon_url: payload.user.icon,
         });
-        console.log(`message sent to slack`, slackMessage.message);
+        logger.debug(`message sent to slack`, slackMessage.message);
         const internalMessage = await slackToInternalMessage(slackMessage.message, slack);
         io.sockets.sockets.forEach((client: Socket) => {
           if (client.connected) {
-            console.log(`sending to client`, internalMessage);
+            logger.debug(`sending to client`, internalMessage);
             client.emit('message', internalMessage);
           }
         });
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
   }
 }
 
 function handleSlackMessage(io: Server, slack: Slack) {
   return async function ({ event, say }: any) {
-    console.log('received message: ', event.text);
+    logger.debug('received message: ', event.text);
     if (!event.subtype) {
       const messageEvent = event as any;
       if (!messageEvent.text) {
@@ -287,30 +287,30 @@ function handleSlackMessage(io: Server, slack: Slack) {
       }
 
       const message: Message = await slackToInternalMessage(messageEvent, slack);
-      console.log('messageEvent: ', JSON.stringify(messageEvent));
-      console.log('sending to clients');
+      logger.debug('messageEvent: ', JSON.stringify(messageEvent));
+      logger.debug('sending to clients');
       io.sockets.sockets.forEach(function (client: Socket) {
-        console.log(`client.connected: ${client.connected}`);
-        console.log(`client.data.channelId: ${client.data.channelId}`);
-        console.log(`messageEvent.channelId: ${messageEvent.channel}`)
+        logger.debug(`client.connected: ${client.connected}`);
+        logger.debug(`client.data.channelId: ${client.data.channelId}`);
+        logger.debug(`messageEvent.channelId: ${messageEvent.channel}`)
         if (client.connected && client.data.channelId === messageEvent.channel) {
-          console.log(`sending to client: ${messageEvent.text}`);
+          logger.debug(`sending to client: ${messageEvent.text}`);
           client.emit('message', message);
         }
       });
     } else {
-      console.log(event.subtype);
+      logger.debug(event.subtype);
     }
   };
 }
 
 (async () => {
-  console.log(`\nAdmin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
-  console.log(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}\n`);
+  logger.info(`Admin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
+  logger.info(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}`);
 
-  console.log(`Magic Link API Key: ${MAGIC_LINK_API_KEY}\n`);
+  logger.info(`Magic Link API Key: ${MAGIC_LINK_API_KEY}`);
 
-  console.log(`Updating channel map...`);
+  logger.info(`Updating channel map...`);
   domain2slack = await readSheet();
 
   const magic = new Magic(MAGIC_LINK_API_KEY);
@@ -337,34 +337,23 @@ function handleSlackMessage(io: Server, slack: Slack) {
   });
 
   app.get('/health', (req, res) => {
+    logger.debug(`Health check`);
     res.send('Franklin Chat server is running!')
   })
 
   addDebugRoute(app, io);
 
   app.get('/update', async (req, res) => {
-    console.log(`Updating channel map...`);
+    logger.info(`Updating channel map...`);
     domain2slack = await readSheet();
     res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/>` + JSON.stringify(Object.fromEntries(domain2slack)));
   })
-
-  collectDefaultMetrics();
-  app.get('/metrics', async (_req, res) => {
-    try {
-      console.log('metrics requested')
-      res.set('Content-Type', register.contentType);
-      res.end(await register.metrics());
-      console.log('metrics sent')
-    } catch (err) {
-      res.status(500).end(err);
-    }
-  });
 
   io.on('connection', handleConnection(io, slack, magic));
   slack.event('message', handleSlackMessage(io, slack));
 
   server.listen(SERVER_PORT, () => {
-    console.log(`⚡️Franklin Chat server is running on port ${SERVER_PORT}!`);
+    logger.info(`⚡️Franklin Chat server is running on port ${SERVER_PORT}!`);
   });
 
-})().catch(console.error);
+})().catch(logger.error);
