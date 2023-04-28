@@ -34,6 +34,8 @@ spec:
               value: dev
             - name: SERVER_PORT
               value: !!str {{ .Values.config.serverPort }}
+            - name: LOG_LEVEL
+              value: !!str {{ .Values.config.logLevel }}
             - name: MAGIC_LINK_API_KEY
               value: !!str {{ .Values.config.magicLinkApiKey }}
             - name: GOOGLE_SHEET_ID
@@ -50,6 +52,16 @@ spec:
               value: !!str {{ .Values.config.slackBotToken }}
             - name: SLACK_APP_TOKEN
               value: !!str {{ .Values.config.slackAppToken }}
+            - name: GRAFANA_ENABLED
+              value: !!str {{ .Values.config.grafanaEnabled }}
+            - name: GRAFANA_HOST
+              value: !!str {{ .Values.config.grafanaHost }}
+            - name: GRAFANA_USER_ID
+              value: !!str {{ .Values.config.grafanaUserId }}
+            - name: GRAFANA_PASSWORD
+              value: !!str {{ .Values.config.grafanaPassword }}
+            - name: GRAFANA_APP_NAME
+              value: !!str {{ .Values.config.grafanaAppName }}
           ports:
             - containerPort: {{ .Values.config.serverPort }}
               protocol: TCP
@@ -57,13 +69,13 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.config.serverPort }}
-            periodSeconds: 5
+            periodSeconds: 10
             timeoutSeconds: 30
           livenessProbe:
             httpGet:
               path: /health
               port: {{ .Values.config.serverPort }}
-            periodSeconds: 30
+            periodSeconds: 60
             timeoutSeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

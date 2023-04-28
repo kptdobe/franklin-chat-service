@@ -1,14 +1,14 @@
 {
   "name": "franklin-chat-service",
-  "version": "1.1.14",
+  "version": "1.1.20",
   "scripts": {
     "build": "tsc",
     "dev": "dotenv -c $NODE_ENV -- ts-node-dev src/app.ts",
     "start": "dotenv -c $NODE_ENV -- npm run build && dotenv -c $NODE_ENV -- node dist/app.js",
-    "build:docker": "dotenv -c $NODE_ENV -- cross-var \"scripts/build-docker-image.sh %npm_package_version%\"",
-    "deploy": "dotenv -c $NODE_ENV -- cross-var \"scripts/deploy-to-k8s.sh %npm_package_version%\"",
+    "build:docker": "npm run build && dotenv -- cross-var \"scripts/build-docker-image.sh %npm_package_version%\"",
+    "deploy": "dotenv -- cross-var \"scripts/deploy-to-k8s.sh %npm_package_version%\"",
     "build:release": "npm run build:docker && npm run deploy",
-    "set:context": "dotenv -c $NODE_ENV -- cross-var \"scripts/set-k8s-context.sh\"",
+    "set:context": "dotenv -- cross-var \"scripts/set-k8s-context.sh\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -20,6 +20,7 @@
     "dotenv": "16.0.3",
     "express": "^4.18.2",
     "googleapis": "^118.0.0",
+    "prom-client": "^14.2.0",
     "socket.io": "^4.6.1",
     "winston": "^3.8.2",
     "winston-loki": "^6.0.6"

@@ -337,7 +337,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
   });
 
   app.get('/health', (req, res) => {
-    logger.debug(`Health check`);
+    logger.verbose(`Health check`);
     res.send('Franklin Chat server is running!')
   })
 

@@ -14,10 +14,10 @@ export const credentials = {
 };
 
 export async function readSheet() {
-  logger.info('\nReading Email to Slack Channel Mapping from Google Sheet');
+  logger.info('Reading Email to Slack Channel Mapping from Google Sheet');
   logger.info(`Google Sheet ID: ${GOOGLE_SHEET_ID}`);
   logger.info(`Google Sheet Range: ${GOOGLE_SHEET_RANGE}`);
-  logger.info(`Google Sheet Client Email: ${credentials.client_email}\n`);
+  logger.info(`Google Sheet Client Email: ${credentials.client_email}`);
 
   const jwt = new JWT({
     email: GOOGLE_SERVICE_ACCOUNT_EMAIL,

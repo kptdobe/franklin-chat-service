@@ -1,7 +1,7 @@
-FROM docker-asr-release.dr.corp.adobe.com/asr/nodejs_v14:2.0-alpine
+FROM --platform=linux/amd64 node:18.4.0-alpine
 
-COPY --chown=asruser node_modules node_modules
-COPY --chown=asruser dist dist
+COPY --chown=node:node node_modules node_modules
+COPY --chown=node:node dist dist
 
 WORKDIR ./dist
 
