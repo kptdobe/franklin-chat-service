@@ -7,6 +7,7 @@ import {Magic} from '@magic-sdk/admin';
 import {readSheet} from './readSheet';
 import {addDebugRoute} from "./debugRoute";
 import {logger} from "./logger";
+import {addMetricsRoute} from "./metricsRoute";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -341,13 +342,14 @@ function handleSlackMessage(io: Server, slack: Slack) {
     res.send('Franklin Chat server is running!')
   })
 
-  addDebugRoute(app, io);
-
   app.get('/update', async (req, res) => {
     logger.info(`Updating channel map...`);
     domain2slack = await readSheet();
     res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/>` + JSON.stringify(Object.fromEntries(domain2slack)));
   })
+
+  addMetricsRoute(app);
+  addDebugRoute(app, io);
 
   io.on('connection', handleConnection(io, slack, magic));
   slack.event('message', handleSlackMessage(io, slack));
