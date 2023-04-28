@@ -22,19 +22,19 @@ export function addDebugRoute(app: express.Express, io: Server) {
         }).join('');
 
         const table = `
-            <table border="1">
+            <table style="border-collapse: collapse; width: 100%;">
               <thead>
-                <tr>
-                  <th>Client ID</th>
-                  <th>Connected</th>
-                  <th>Data</th>
+                <tr style="background-color: #f5f5f5; font-weight: bold; text-align: left;">
+                  <th style="border: 1px solid #ddd; padding: 8px; width: 30%;">Client ID</th>
+                  <th style="border: 1px solid #ddd; padding: 8px; width: 15%;">Connected</th>
+                  <th style="border: 1px solid #ddd; padding: 8px;">Data</th>
                 </tr>
               </thead>
               <tbody>
                 ${tableRows}
               </tbody>
             </table>
-          `;
+        `;
 
         res.send(table);
     });
