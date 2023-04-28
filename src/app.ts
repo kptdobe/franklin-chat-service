@@ -253,7 +253,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 function handleChatMessage(io: Server, channelId: string, slack: Slack) {
   return async function (data: any) {
     try {
-      logger.debug('received: %s', data);
+      logger.debug(`received: ${data}`);
       if (data) {
         const payload = data as Message;
         const slackMessage = await slack.client.chat.postMessage({
