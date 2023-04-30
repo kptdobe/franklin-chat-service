@@ -13,7 +13,9 @@ export const credentials = {
   private_key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY as string,
 };
 
-export async function readSheet() {
+let channelMapping = new Map<string, string>();
+
+async function fetchChannelMapping() {
   logger.info('Reading Email to Slack Channel Mapping from Google Sheet');
   logger.info(`Google Sheet ID: ${GOOGLE_SHEET_ID}`);
   logger.info(`Google Sheet Range: ${GOOGLE_SHEET_RANGE}`);
@@ -38,4 +40,12 @@ export async function readSheet() {
   }
   logger.warn('No data found.');
   return new Map<string, string>();
+}
+
+export function getChannelMapping() {
+  return channelMapping;
+}
+
+export async function updateChannelMapping() {
+  channelMapping = await fetchChannelMapping();
 }

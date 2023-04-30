@@ -4,7 +4,7 @@ import {Server, Socket} from 'socket.io';
 import { App as Slack} from '@slack/bolt';
 import * as http from 'http';
 import {Magic} from '@magic-sdk/admin';
-import {readSheet} from './readSheet';
+import {getChannelMapping, updateChannelMapping} from './channelMapping';
 import {addDebugRoute} from "./debugRoute";
 import {logger} from "./logger";
 import {addMetricsRoute} from "./metricsRoute";
@@ -15,8 +15,6 @@ const MAGIC_LINK_API_KEY = process.env.MAGIC_LINK_API_KEY as string;
 
 const SLACK_ADMIN_CHANNEL_ID = process.env.SLACK_ADMIN_CHANNEL_ID as string;
 const SLACK_DEFAULT_CHANNEL_ID = process.env.SLACK_DEFAULT_CHANNEL_ID as string;
-
-let domain2slack = new Map<string, string>();
 
 type User = {
   name: string,
@@ -193,8 +191,8 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 
     logger.log('token validated', email);
 
-    const channelId = domain2slack.get(email.split('@')[1])
-        ?? domain2slack.get('*')
+    const channelId = getChannelMapping().get(email.split('@')[1])
+        ?? getChannelMapping().get('*')
         ?? SLACK_DEFAULT_CHANNEL_ID;
     logger.debug(`channelId: ${channelId}`);
 
@@ -312,7 +310,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
   logger.info(`Magic Link API Key: ${MAGIC_LINK_API_KEY}`);
 
   logger.info(`Updating channel map...`);
-  domain2slack = await readSheet();
+  await updateChannelMapping()
 
   const magic = new Magic(MAGIC_LINK_API_KEY);
 
@@ -344,8 +342,9 @@ function handleSlackMessage(io: Server, slack: Slack) {
 
   app.get('/update', async (req, res) => {
     logger.info(`Updating channel map...`);
-    domain2slack = await readSheet();
-    res.send(`Updated channel map! Received ${domain2slack.size} domains.<br/>` + JSON.stringify(Object.fromEntries(domain2slack)));
+    await updateChannelMapping();
+    const channelMapping = getChannelMapping();
+    res.send(`Updated channel map! Received ${channelMapping.size} domains.<br/>` + JSON.stringify(Object.fromEntries(channelMapping)));
   })
 
   addMetricsRoute(app);
