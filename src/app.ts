@@ -277,7 +277,7 @@ function handleChatMessage(io: Server, channelId: string, slack: Slack) {
 }
 
 function handleSlackMessage(io: Server, slack: Slack) {
-  return async function ({ event, say }: any) {
+  return async function ({ event }: any) {
     logger.debug('received message: ', event.text);
     if (!event.subtype) {
       const messageEvent = event as any;

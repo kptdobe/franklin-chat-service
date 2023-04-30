@@ -3,7 +3,7 @@ import {Server} from 'socket.io';
 
 export function addDebugRoute(app: express.Express, io: Server) {
     app.get('/debug', (req, res) => {
-        const connectedClients = Array.from(io.sockets.sockets.entries()).map(([id, socket]) => {
+        const connectedClients = Array.from(io.sockets.sockets.entries()).map(([, socket]) => {
             return {
                 id: socket.id,
                 connected: socket.connected,
