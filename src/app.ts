@@ -8,6 +8,7 @@ import {addAdminRoute} from "./adminRoute";
 import {logger} from "./logger";
 import {addMetricsRoute} from "./metricsRoute";
 import {getMetadataByToken} from "./magicLink";
+import {addHeathRoute} from "./healthRoute";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -329,20 +330,9 @@ function handleSlackMessage(io: Server, slack: Slack) {
     }
   });
 
-  app.get('/health', (req, res) => {
-    logger.verbose(`Health check`);
-    res.send('Franklin Chat server is running!')
-  })
-
-  app.get('/update', async (req, res) => {
-    logger.info(`Updating channel map...`);
-    await updateChannelMapping();
-    const channelMapping = getChannelMapping();
-    res.send(`Updated channel map! Received ${channelMapping.size} domains.<br/>` + JSON.stringify(Object.fromEntries(channelMapping)));
-  })
-
-  addAdminRoute(app, io);
+  addHeathRoute(app);
   addMetricsRoute(app);
+  addAdminRoute(app, io);
 
   io.on('connection', handleConnection(io, slack));
   slack.event('message', handleSlackMessage(io, slack));
