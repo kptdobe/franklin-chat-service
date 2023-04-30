@@ -3,15 +3,13 @@ import cors from 'cors';
 import {Server, Socket} from 'socket.io';
 import { App as Slack} from '@slack/bolt';
 import * as http from 'http';
-import {Magic} from '@magic-sdk/admin';
 import {getChannelMapping, updateChannelMapping} from './channelMapping';
 import {addDebugRoute} from "./debugRoute";
 import {logger} from "./logger";
 import {addMetricsRoute} from "./metricsRoute";
+import {getMetadataByToken} from "./magicLink";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
-
-const MAGIC_LINK_API_KEY = process.env.MAGIC_LINK_API_KEY as string;
 
 const SLACK_ADMIN_CHANNEL_ID = process.env.SLACK_ADMIN_CHANNEL_ID as string;
 const SLACK_DEFAULT_CHANNEL_ID = process.env.SLACK_DEFAULT_CHANNEL_ID as string;
@@ -159,7 +157,7 @@ async function getReplies(ts: string, channel: string, slack: Slack) {
   return slackToInternalMessages(replies.messages ?? [], slack);
 }
 
-function handleConnection(io: Server, slack: Slack, magic: Magic) {
+function handleConnection(io: Server, slack: Slack) {
   return async function connection(socket: Socket) {
 
     if (!socket.handshake.query['token']) {
@@ -173,7 +171,7 @@ function handleConnection(io: Server, slack: Slack, magic: Magic) {
 
     try {
       logger.debug('validating token');
-      const metadata = await magic.users.getMetadataByToken(socket.handshake.query['token'] as string);
+      const metadata = await getMetadataByToken(socket.handshake.query['token'] as string);
       email = metadata.email;
     } catch (e) {
       logger.error('client connected with invalid token', e);
@@ -307,12 +305,8 @@ function handleSlackMessage(io: Server, slack: Slack) {
   logger.info(`Admin channel: ${SLACK_ADMIN_CHANNEL_ID}`);
   logger.info(`Default channel: ${SLACK_DEFAULT_CHANNEL_ID}`);
 
-  logger.info(`Magic Link API Key: ${MAGIC_LINK_API_KEY}`);
-
   logger.info(`Updating channel map...`);
   await updateChannelMapping()
-
-  const magic = new Magic(MAGIC_LINK_API_KEY);
 
   const slack = new Slack({
     token: process.env.SLACK_BOT_TOKEN,
@@ -350,7 +344,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
   addMetricsRoute(app);
   addDebugRoute(app, io);
 
-  io.on('connection', handleConnection(io, slack, magic));
+  io.on('connection', handleConnection(io, slack));
   slack.event('message', handleSlackMessage(io, slack));
 
   server.listen(SERVER_PORT, () => {
