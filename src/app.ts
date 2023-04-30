@@ -8,7 +8,7 @@ import {addAdminRoute} from "./adminRoute";
 import {logger} from "./logger";
 import {addMetricsRoute} from "./metricsRoute";
 import {getMetadataByToken} from "./magicLink";
-import {addHeathRoute} from "./healthRoute";
+import {addHealthRoute} from "./healthRoute";
 
 const SERVER_PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8081;
 
@@ -330,7 +330,7 @@ function handleSlackMessage(io: Server, slack: Slack) {
     }
   });
 
-  addHeathRoute(app);
+  addHealthRoute(app);
   addMetricsRoute(app);
   addAdminRoute(app, io);
 
