@@ -4,7 +4,7 @@ import {Server, Socket} from 'socket.io';
 import { App as Slack} from '@slack/bolt';
 import * as http from 'http';
 import {getChannelMapping, updateChannelMapping} from './channelMapping';
-import {addDebugRoute} from "./debugRoute";
+import {addAdminRoute} from "./adminRoute";
 import {logger} from "./logger";
 import {addMetricsRoute} from "./metricsRoute";
 import {getMetadataByToken} from "./magicLink";
@@ -341,8 +341,8 @@ function handleSlackMessage(io: Server, slack: Slack) {
     res.send(`Updated channel map! Received ${channelMapping.size} domains.<br/>` + JSON.stringify(Object.fromEntries(channelMapping)));
   })
 
+  addAdminRoute(app, io);
   addMetricsRoute(app);
-  addDebugRoute(app, io);
 
   io.on('connection', handleConnection(io, slack));
   slack.event('message', handleSlackMessage(io, slack));

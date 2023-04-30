@@ -16,7 +16,7 @@ export const credentials = {
 let channelMapping = new Map<string, string>();
 
 async function fetchChannelMapping() {
-  logger.info('Reading Email to Slack Channel Mapping from Google Sheet');
+  logger.info('Reading Channel Mapping from Google Sheet');
   logger.info(`Google Sheet ID: ${GOOGLE_SHEET_ID}`);
   logger.info(`Google Sheet Range: ${GOOGLE_SHEET_RANGE}`);
   logger.info(`Google Sheet Client Email: ${credentials.client_email}`);
