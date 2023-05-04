@@ -7,7 +7,11 @@ import {readFileSync} from "node:fs";
 const ROUTE_PATH = '/admin';
 
 function getAppVersion() {
-    return JSON.parse(readFileSync('package.json', 'utf8')).version;
+    try {
+        return JSON.parse(readFileSync('package.json', 'utf8')).version;
+    } catch (e) {
+        return 'unknown';
+    }
 }
 
 function renderConnections(io: Server) {
