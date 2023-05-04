@@ -3,8 +3,8 @@
   "version": "1.1.21",
   "scripts": {
     "build": "tsc",
-    "dev": "dotenv -c $NODE_ENV -- ts-node-dev src/app.ts",
-    "start": "dotenv -c $NODE_ENV -- npm run build && dotenv -c $NODE_ENV -- node dist/app.js",
+    "dev": "dotenv -c -- ts-node-dev src/app.ts",
+    "start": "dotenv -c -- npm run build && dotenv -c $NODE_ENV -- node dist/app.js",
     "build:docker": "npm run build && dotenv -- cross-var \"scripts/build-docker-image.sh %npm_package_version%\"",
     "deploy": "dotenv -- cross-var \"scripts/deploy-to-k8s.sh %npm_package_version%\"",
     "build:release": "npm run build:docker && npm run deploy",

@@ -44,3 +44,4 @@ The logs are sent to Grafana Cloud and can be inspected [here](https://tsaplin.g
 
 ## Development
 You can use `npm run dev` to run the service in dev mode: watch for changes in TS files and open the inspect port.
+To override the production environment variables, create a `.env.local` file and add the variables you want to override.
