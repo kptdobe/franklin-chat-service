@@ -39,5 +39,8 @@
 - Metrics: [/metrics](https://franklin-chat-service-ns-team-sites-xp-outbound-marketing-stage.ethos09-prod-va7.ethos.adobe.net/metrics)
 - Admin panel: [/admin](https://franklin-chat-service-ns-team-sites-xp-outbound-marketing-stage.ethos09-prod-va7.ethos.adobe.net/admin)
 
+## Troubleshooting
+The logs are sent to Grafana Cloud and can be inspected [here](https://tsaplin.grafana.net/goto/mPw31Ys4R?orgId=1)
+
 ## Development
 You can use `npm run dev` to run the service in dev mode: watch for changes in TS files and open the inspect port.
