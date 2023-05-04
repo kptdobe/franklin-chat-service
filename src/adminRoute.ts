@@ -2,8 +2,13 @@ import express from "express";
 import {Server} from 'socket.io';
 import {getChannelMapping, updateChannelMapping} from "./channelMapping";
 import {logger} from "./logger";
+import {readFileSync} from "node:fs";
 
 const ROUTE_PATH = '/admin';
+
+function getAppVersion() {
+    return JSON.parse(readFileSync('package.json', 'utf8')).version;
+}
 
 function renderConnections(io: Server) {
     const connectedClients = Array.from(io.sockets.sockets.entries()).map(([, socket]) => {
@@ -90,7 +95,7 @@ function renderDashboard(io: Server) {
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
                 </head>
                 <body style='padding: 25px'>
-                <h1>Admin Dashboard</h1>
+                <h1>Admin Dashboard (${getAppVersion()})</h1>
                 ${renderConnections(io)}
                 ${renderChannelMapping()}
                 </body>
