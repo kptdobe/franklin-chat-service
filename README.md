@@ -1,6 +1,8 @@
 # Franklin Chat Service
-- Slack app: https://api.slack.com/apps/AA4TSRLKV
-- Passwordless login: https://dashboard.magic.link/app?cid=pDpB8lFitWJs6e-dh2Q5EJ3-nqRinvpEFWnh2dO4leU=
+- Slack app:
+  - https://api.slack.com/apps/AA4TSRLKV (AEM Engineering)
+  - https://api.slack.com/apps/A056A7R316Z (Adobe Enterprise Support)
+- Passwordless login: [MagicLink](https://dashboard.magic.link/app?cid=pDpB8lFitWJs6e-dh2Q5EJ3-nqRinvpEFWnh2dO4leU=)
 - E-mail to channel mapping: [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1ODgfW1hBKvVM1yBfMX06EBUpL_kPfUNMkctCuiNRoWw/edit?usp=sharing) 
 
 ## Running locally

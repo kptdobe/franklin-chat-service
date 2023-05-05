@@ -188,7 +188,7 @@ function handleConnection(io: Server, slack: Slack) {
       return;
     }
 
-    logger.log('token validated', email);
+    logger.debug('token validated', email);
 
     const channelId = getChannelMapping().get(email.split('@')[1])
         ?? getChannelMapping().get('*')
