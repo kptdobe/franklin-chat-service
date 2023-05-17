@@ -38,12 +38,8 @@ spec:
               value: !!str {{ .Values.config.logLevel }}
             - name: MAGIC_LINK_API_KEY
               value: !!str {{ .Values.config.magicLinkApiKey }}
-            - name: GOOGLE_SHEET_ID
-              value: !!str {{ .Values.config.googleSheetId }}
-            - name: GOOGLE_SERVICE_ACCOUNT_EMAIL
-              value: !!str {{ .Values.config.googleServiceAccountEmail }}
-            - name: GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
-              value: !!str {{ .Values.config.googleServiceAccountPrivateKey | quote }}
+            - name: CHANNEL_MAPPING_URL
+              value: !!str {{ .Values.config.channelMappingUrl }}
             - name: SLACK_ADMIN_CHANNEL_ID
               value: !!str {{ .Values.config.slackAdminChannelId }}
             - name: SLACK_DEFAULT_CHANNEL_ID
