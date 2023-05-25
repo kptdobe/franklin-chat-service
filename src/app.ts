@@ -190,14 +190,23 @@ function handleConnection(io: Server, slack: Slack) {
 
     logger.debug('token validated', email);
 
-    const channelId = getChannelMapping().get(email.split('@')[1])
-        ?? getChannelMapping().get('*')
-        ?? SLACK_DEFAULT_CHANNEL_ID;
+    const channelId = getChannelMapping().get(email.split('@')[1]);
+    if (!channelId) {
+      await slack.client.chat.postMessage({
+        channel: SLACK_ADMIN_CHANNEL_ID,
+        text: `Client ${email} tried to connect but no channel mapping found ⛔`
+      });
+      logger.error(`no channel mapping found for ${email}`);
+      logger.info('disconnecting client');
+      socket.emit('error', 'no channel mapping found');
+      socket.disconnect(true);
+      return;
+    }
     logger.debug(`channelId: ${channelId}`);
 
     await slack.client.chat.postMessage({
       channel: SLACK_ADMIN_CHANNEL_ID,
-      text: `Client ${email} connected ⚡️`
+      text: `Client ${email} connected 👋️`
     });
 
     socket.on('history', async (data, callback) => {
@@ -230,7 +239,7 @@ function handleConnection(io: Server, slack: Slack) {
       logger.info('client disconnected');
       await slack.client.chat.postMessage({
         channel: SLACK_ADMIN_CHANNEL_ID,
-        text: `Client ${socket.data.email} disconnected 🖐`
+        text: `Client ${socket.data.email} disconnected 🚪`
       });
     });
 
