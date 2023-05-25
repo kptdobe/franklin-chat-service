@@ -3,7 +3,7 @@
   - https://api.slack.com/apps/AA4TSRLKV (AEM Engineering)
   - https://api.slack.com/apps/A056A7R316Z (Adobe Enterprise Support)
 - Passwordless login: [MagicLink](https://dashboard.magic.link/app?cid=pDpB8lFitWJs6e-dh2Q5EJ3-nqRinvpEFWnh2dO4leU=)
-- E-mail to channel mapping: [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1ODgfW1hBKvVM1yBfMX06EBUpL_kPfUNMkctCuiNRoWw/edit?usp=sharing) 
+- E-mail to channel mapping: [Google Spreadsheet](https://drive.google.com/drive/u/2/folders/1MlfI4ghY9RdHUYf9xrX_7S_qdBEDEoaC) 
 
 ## Running locally
 - add the following properties to `.env`
